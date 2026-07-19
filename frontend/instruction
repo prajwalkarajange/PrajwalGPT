@@ -1,0 +1,197 @@
+Perfect! Since your project is working locally, here's the deployment process I recommend:
+
+Frontend: React + Vite → Vercel
+Backend: Spring Boot + Spring AI + Groq → Render
+Source Code: GitHub
+
+This is free and looks professional on your resume.
+
+Phase 1: Push Your Code to GitHub
+1. Create a GitHub Repository
+
+Name it:
+
+PrajwalGPT
+
+Description:
+
+Enterprise AI Assistant built with Spring Boot, Spring AI, Groq, React & Tailwind CSS.
+
+Keep it Public.
+
+2. Push Your Code
+
+Backend:
+
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/<YOUR_USERNAME>/PrajwalGPT.git
+git push -u origin main
+
+If your frontend is a separate project, create another repository (for example, PrajwalGPT-Frontend) or keep both in a monorepo with backend/ and frontend/ folders.
+
+Phase 2: Deploy Spring Boot on Render
+1. Go to Render
+
+https://render.com
+
+Login with GitHub.
+
+2. Click
+New
+
+↓
+
+Web Service
+3. Select your GitHub repository
+
+Choose the repository containing the Spring Boot application.
+
+4. Configure
+
+Name
+
+prajwalgpt-api
+
+Language
+
+Java
+
+Branch
+
+main
+
+Root Directory
+
+Leave empty if the backend is at the repository root. If it's inside a backend folder, set it to:
+
+backend
+
+Build Command
+
+./mvnw clean package
+
+If you don't have the Maven Wrapper, use:
+
+mvn clean package
+
+Start Command
+
+java -jar target/*.jar
+5. Environment Variables
+
+Add these in Render:
+
+Key	Value
+SPRING_AI_OPENAI_API_KEY	Your Groq API key
+SPRING_AI_OPENAI_BASE_URL	https://api.groq.com/openai/v1
+SPRING_AI_OPENAI_CHAT_MODEL	llama-3.3-70b-versatile
+
+Then update application.properties:
+
+spring.ai.openai.api-key=${SPRING_AI_OPENAI_API_KEY}
+spring.ai.openai.base-url=${SPRING_AI_OPENAI_BASE_URL}
+spring.ai.openai.chat.model=${SPRING_AI_OPENAI_CHAT_MODEL}
+
+Commit and push these changes (without hardcoding your API key).
+
+6. Deploy
+
+Render will build your application.
+
+You'll get a URL similar to:
+
+https://prajwalgpt-api.onrender.com
+
+Test it:
+
+https://prajwalgpt-api.onrender.com/api/default/hello
+Phase 3: Deploy React on Vercel
+
+Go to:
+
+https://vercel.com
+
+Sign in with GitHub.
+
+Click:
+
+Add New Project
+
+Import your React repository.
+
+Environment Variable
+
+In Vercel, add:
+
+Key	Value
+VITE_API_URL	https://prajwalgpt-api.onrender.com/api
+Update api.js
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
+export default api;
+
+export async function askAI(conversationId, message) {
+  const response = await api.get(
+    `/${conversationId}/${encodeURIComponent(message)}`
+  );
+  return response.data;
+}
+Deploy
+
+Vercel will provide a URL like:
+
+https://prajwalgpt.vercel.app
+Phase 4: Update Backend CORS
+
+Allow your Vercel domain:
+
+configuration.setAllowedOrigins(List.of(
+    "http://localhost:5173",
+    "https://prajwalgpt.vercel.app"
+));
+
+If your Vercel URL changes while testing, update it accordingly.
+
+Phase 5: Test
+
+Open your deployed frontend:
+
+https://prajwalgpt.vercel.app
+
+Ask:
+
+Hello
+
+If everything is configured correctly, you'll receive a response from Groq through your deployed Spring Boot backend.
+
+Final Architecture
+                GitHub
+                   │
+      ┌────────────┴────────────┐
+      ▼                         ▼
+ React (Vercel)         Spring Boot (Render)
+      │                         │
+      └──────────────┬──────────┘
+                     ▼
+                  Spring AI
+                     │
+                     ▼
+                  Groq API
+Before deploying
+
+Make sure these are true:
+
+✅ The project runs locally without errors.
+✅ API keys are stored in environment variables, not in source code.
+✅ React uses VITE_API_URL instead of http://localhost:8080.
+✅ Backend CORS includes both http://localhost:5173 and your Vercel domain.
+✅ Your code is pushed to GitHub.
+
+If you follow these steps, you'll have a live application that you can share in your resume, LinkedIn, and portfolio.
