@@ -356,11 +356,11 @@ yourmail@gmail.com
 
 # 🌟 If you like this project
 
-## ⭐ Star this Repository
+ ⭐ Star this Repository
 
-## 🍴 Fork it
+🍴 Fork it
 
-## ❤️ Follow me on GitHub
+ ❤️ Follow me on GitHub
 
 ---
 
